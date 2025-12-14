@@ -15,10 +15,15 @@ from email.message import EmailMessage
 
 
 
-def get_sats_balance(btc_explorer_url,btc_address):
+def get_sats_balance(host,api,btc_address):
 	try:
-		request = requests.get("https://{}/api/address/{}".format(btc_explorer_url,btc_address),verify=False)
-		return int(request.json()['txHistory']['balanceSat'])
+		request = requests.get("https://{}/api/address/{}".format(host,btc_address),verify=False)
+		if api == 'explorer':
+			return int(request.json()['txHistory']['balanceSat'])
+		if api == 'mempool':
+			return int(request.json()['chain_stats']['funded_txo_sum'])
+		logging.info('Unknown API')
+		return -1
 	except Exception as e:
 		logging.info(e)
 		return -1
@@ -44,8 +49,9 @@ def send_email(from_email,to_email,subject,message,email_user,email_pass,server,
 
 ####Main
 parser = argparse.ArgumentParser()
-parser.add_argument('-x','--explorer',default='', required=True,help="Bitcoin Explorer URL:port")
+parser.add_argument('-x','--host',default='', required=True,help="API host")
 parser.add_argument('-a','--address',default='', required=True,help="Bitcoin address to watch")
+parser.add_argument('-i','--api',default='explorer',choices=['explorer','mempool'], required=False,help="API Type")
 parser.add_argument('-n','--nickname',default='', required=True,help="Bitcoin address nickname")
 parser.add_argument('-s','--sats',type=int, default=0, required=True,help="Expected sats ")
 parser.add_argument('-f','--frm', default='', required=True,help="Email From Address")
@@ -55,13 +61,14 @@ parser.add_argument('-u','--user', default='', required=True,help="SMTP User")
 parser.add_argument('-p','--psw', default='', required=True,help="SMTP Password")
 parser.add_argument('-o','--port', type=int, default=587, help="SMTP Port")
 args = parser.parse_args()
-sats_balance = get_sats_balance(args.explorer,args.address)
+sats_balance = get_sats_balance(args.host,args.api,args.address)
+logging.info("balance is {} sats".format(sats_balance))
 if sats_balance == -1:
 	subject = "Cannot connect to node to check Address '{}'".format(args.nickname)
-	message = "Your BTC Node seems to be down"
+	message = "Your Node seems to be down"
 else:	
 	subject = "Address '{}' balance has changed".format(args.nickname)
-	message = "BTC balance is {} sats".format(sats_balance)
+	message = "balance is {} sats".format(sats_balance)
 
 if address_balance_changed(args.sats,sats_balance):
 	send_email(args.frm,args.to,subject,message,args.user,args.psw,args.server,args.port)

@@ -9,6 +9,24 @@ A lightweight Python CLI tool that monitors a specific Bitcoin address for balan
 * **Multi-Recipient Support:** Allows sending notifications to multiple emails separated by semicolons.
 * **Self-Hosted Friendly:** Disables SSL verification warnings for users querying private or self-hosted API backends.
 
+## API Integration Details
+
+The script parses different JSON payload schemas depending on the `-i` / `--api` flag selection:
+
+### 1. Blockbook API (`-i explorer`)
+Queries standard Blockbook nodes using the address history endpoint. It targets the nested `txHistory` block to retrieve the current balance calculation:
+```python
+# Expected Blockbook JSON Response Path
+return int(request.json()['txHistory']['balanceSat'])
+```
+
+### 2. Mempool API (`-i mempool`)
+Queries Mempool.space or self-hosted Esplora instances. It targets the `chain_stats` block to calculate total received funds:
+```python
+# Expected Mempool JSON Response Path
+return int(request.json()['chain_stats']['funded_txo_sum'])
+```
+
 ## Prerequisites
 
 * Python 3.x

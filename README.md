@@ -1,6 +1,6 @@
 # Bitcoin Address Balance Monitor
 
-A lightweight Python CLI tool that monitors a specific Bitcoin address for balance changes. It fetches the current balance in Satoshis using either Blockbook (Explorer) or Mempool APIs and triggers an email alert if the balance deviates from your expected amount.
+A lightweight Python CLI tool that monitors a specific Bitcoin address for balance changes. It fetches the current balance in Satoshis using either BTC_RPC_Explorer or Mempool APIs and triggers an email alert if the balance deviates from your expected amount.
 
 ## Features
 
@@ -8,6 +8,7 @@ A lightweight Python CLI tool that monitors a specific Bitcoin address for balan
 * **Automated Alerts:** Triggers email notifications immediately when a balance change is detected.
 * **Multi-Recipient Support:** Allows sending notifications to multiple emails separated by semicolons.
 * **Self-Hosted Friendly:** Disables SSL verification warnings for users querying private or self-hosted API backends.
+* **No Xpubs leaked:** looks at a single address does not use xpubs by design
 
 ## API Integration Details
 

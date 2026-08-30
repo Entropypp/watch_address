@@ -13,14 +13,14 @@ A lightweight Python CLI tool that monitors a specific Bitcoin address for balan
 
 The script parses different JSON payload schemas depending on the `-i` / `--api` flag selection:
 
-### 1. Blockbook API (`-i explorer`)
+### 1. BTC RPC Explorer API (`-i explorer`) in Github janoside/btc-rpc-explorer
 Queries standard Blockbook nodes using the address history endpoint. It targets the nested `txHistory` block to retrieve the current balance calculation:
 ```python
 # Expected Blockbook JSON Response Path
 return int(request.json()['txHistory']['balanceSat'])
 ```
 
-### 2. Mempool API (`-i mempool`)
+### 2. Mempool API (`-i mempool`) in Github mempool/mempool
 Queries Mempool.space or self-hosted Esplora instances. It targets the `chain_stats` block to calculate total received funds:
 ```python
 # Expected Mempool JSON Response Path
